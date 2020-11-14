@@ -32,7 +32,7 @@ spec:
   # define the canary analysis timing and KPIs
   analysis:
     # schedule interval (default 60s)
-    interval: 1m
+    interval: 15s
     # max number of failed metric checks before rollback
     threshold: 5
     # max traffic percentage routed to canary
@@ -59,13 +59,13 @@ spec:
     webhooks:
       - name: acceptance-test
         type: pre-rollout
-        url: http://flagger-loadtester.apps/
+        url: http://flagger-loadtester.$(NAMESPACE)/
         timeout: 30s
         metadata:
           type: bash
-          cmd: "curl -sd 'test' http://podinfo-canary.apps:9898/token | grep token"
+          cmd: "curl -sd 'test' http://podinfo-canary.$(NAMESPACE):9898/token | grep token"
       - name: load-test
-        url: http://flagger-loadtester.apps/
+        url: http://flagger-loadtester.$(NAMESPACE)/
         timeout: 5s
         metadata:
-          cmd: "hey -z 1m -q 10 -c 2 http://podinfo-canary.apps:9898/"
+          cmd: "hey -z 1m -q 10 -c 2 http://podinfo-canary.$(NAMESPACE):9898/"

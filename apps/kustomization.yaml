@@ -5,6 +5,16 @@ resources:
   - namespace.yaml
   - loadtester
   - podinfo
+vars:
+  - name: NAMESPACE
+    objref:
+      kind: Namespace
+      name: apps
+      apiVersion: v1
+    fieldref:
+      fieldpath: metadata.name
+configurations:
+  - kustomizeconfig.yaml
 images:
   - name: ghcr.io/stefanprodan/podinfo
     newName: ghcr.io/stefanprodan/podinfo

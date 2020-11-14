@@ -1,0 +1,5 @@
+varReference:
+  - path: spec/analysis/webhooks/url
+    kind: Canary
+  - path: spec/analysis/webhooks/metadata/cmd
+    kind: Canary
