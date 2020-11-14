@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   dependsOn:
-    - name: appmesh-controller
+    - name: flagger
   sourceRef:
     kind: GitRepository
     name: flux-system
