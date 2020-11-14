@@ -1,0 +1,20 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: appmesh-controller
+spec:
+  releaseName: appmesh-controller
+  chart:
+    spec:
+      chart: appmesh-controller
+      sourceRef:
+        kind: HelmRepository
+        name: eks
+        namespace: flux-system
+  interval: 5m
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
