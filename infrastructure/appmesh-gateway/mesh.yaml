@@ -5,4 +5,4 @@ metadata:
 spec:
   namespaceSelector:
     matchLabels:
-      mesh: appmesh
+      appmesh.k8s.aws/sidecarInjectorWebhook: enabled

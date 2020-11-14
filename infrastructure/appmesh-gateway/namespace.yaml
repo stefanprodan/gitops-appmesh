@@ -3,5 +3,4 @@ kind: Namespace
 metadata:
   name: appmesh-gateway
   labels:
-    mesh: appmesh
     appmesh.k8s.aws/sidecarInjectorWebhook: enabled

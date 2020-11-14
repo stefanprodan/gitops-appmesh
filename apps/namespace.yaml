@@ -3,5 +3,4 @@ kind: Namespace
 metadata:
   name: apps
   labels:
-    mesh: appmesh
     appmesh.k8s.aws/sidecarInjectorWebhook: enabled
