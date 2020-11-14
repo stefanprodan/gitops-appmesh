@@ -1,0 +1,22 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: appmesh-prometheus
+spec:
+  releaseName: appmesh-prometheus
+  chart:
+    spec:
+      chart: appmesh-prometheus
+      sourceRef:
+        kind: HelmRepository
+        name: eks
+        namespace: flux-system
+  interval: 5m
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    retention: 2h
