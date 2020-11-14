@@ -5,3 +5,7 @@ resources:
   - namespace.yaml
   - loadtester
   - podinfo
+images:
+  - name: ghcr.io/stefanprodan/podinfo
+    newName: ghcr.io/stefanprodan/podinfo
+    newTag: 5.0.0
