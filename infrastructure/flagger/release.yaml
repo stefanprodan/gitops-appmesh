@@ -1,0 +1,23 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: flagger
+spec:
+  releaseName: flagger
+  chart:
+    spec:
+      chart: flagger
+      sourceRef:
+        kind: HelmRepository
+        name: flagger
+        namespace: flux-system
+  interval: 5m
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    metricsServer: http://appmesh-prometheus:9090
+    meshProvider: appmesh:v1beta2
