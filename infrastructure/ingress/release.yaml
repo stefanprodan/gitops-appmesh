@@ -1,0 +1,23 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: appmesh-gateway
+spec:
+  releaseName: appmesh-gateway
+  chart:
+    spec:
+      chart: appmesh-gateway
+      sourceRef:
+        kind: HelmRepository
+        name: eks
+        namespace: flux-system
+  interval: 5m
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    appmesh:
+      gateway: true
