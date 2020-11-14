@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: podinfo
 spec:
-  replicas: 2
   minReadySeconds: 3
   revisionHistoryLimit: 5
   progressDeadlineSeconds: 60
