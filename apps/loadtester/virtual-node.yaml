@@ -1,0 +1,21 @@
+apiVersion: appmesh.k8s.aws/v1beta2
+kind: VirtualNode
+metadata:
+  name: flagger-loadtester
+  labels:
+    app.kubernetes.io/name: flagger-loadtester
+spec:
+  podSelector:
+    matchLabels:
+      app: flagger-loadtester
+  logging:
+    accessLog:
+      file:
+        path: /dev/stdout
+  backends:
+    - virtualService:
+        virtualServiceRef:
+          name: podinfo
+    - virtualService:
+        virtualServiceRef:
+          name: podinfo-canary
