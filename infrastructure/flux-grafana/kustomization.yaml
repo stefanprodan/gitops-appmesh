@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: flux-system
+resources:
+  - https://github.com/fluxcd/flux2/manifests//monitoring/grafana?ref=main
+patchesStrategicMerge:
+  - |
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: grafana-datasources
+      namespace: flux-system
+    data:
+      datasources.yaml: |-
+        apiVersion: 1
+        deleteDatasources:
+          - name: prometheus
+        datasources:
+        - name: prometheus
+          type: prometheus
+          access: proxy
+          url: http://appmesh-prometheus.appmesh-system:9090
+          isDefault: true
+          editable: true
+          version: 1
