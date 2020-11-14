@@ -1,0 +1,92 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: sources
+  namespace: flux-system
+spec:
+  interval: 1h
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./infrastructure/sources
+  prune: true
+  validation: client
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: appmesh-controller
+  namespace: flux-system
+spec:
+  interval: 1h
+  dependsOn:
+    - name: sources
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./infrastructure/appmesh-controller
+  prune: true
+  validation: client
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v1beta1
+      kind: HelmRelease
+      name: appmesh-controller
+      namespace: appmesh-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: appmesh-gateway
+  namespace: flux-system
+spec:
+  interval: 1h
+  dependsOn:
+    - name: appmesh-controller
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./infrastructure/appmesh-gateway
+  prune: true
+  validation: client
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: appmesh-prometheus
+  namespace: flux-system
+spec:
+  interval: 1h
+  dependsOn:
+    - name: appmesh-controller
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./infrastructure/appmesh-prometheus
+  prune: true
+  validation: client
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v1beta1
+      kind: HelmRelease
+      name: appmesh-prometheus
+      namespace: appmesh-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: flagger
+  namespace: flux-system
+spec:
+  interval: 1h
+  dependsOn:
+    - name: appmesh-controller
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./infrastructure/flagger
+  prune: true
+  validation: client
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v1beta1
+      kind: HelmRelease
+      name: flagger
+      namespace: appmesh-system
