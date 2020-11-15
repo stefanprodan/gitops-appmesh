@@ -4,7 +4,7 @@ metadata:
   name: stefan-appmesh
   region: us-west-2
   version: "1.18"
-nodeGroups:
+managedNodeGroups:
   - name: default
     instanceType: m5.large
     desiredCapacity: 2
