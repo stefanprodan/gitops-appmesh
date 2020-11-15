@@ -2,6 +2,8 @@
 
 Progressive Delivery on EKS with AppMesh, Flagger and Flux v2.
 
+![](docs/img/gitops-appmesh.png)
+
 ## Prerequisites
 
 Install [eksctl](https://eksctl.io/), [yq](https://mikefarah.gitbook.io/yq/)
@@ -116,6 +118,8 @@ $ watch curl -s ${URL}
 ```
 
 When the URL becomes available, open it in a browser and you'll see the podinfo UI.
+
+![](docs/img/podinfo-500.png)
 
 ## Automated canary promotion
 
