@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   dependsOn:
-    - name: flagger
+    - name: cluster-addons
   sourceRef:
     kind: GitRepository
     name: flux-system
