@@ -29,7 +29,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure/cluster-addons
+  path: ./infrastructure/mesh-addons
   prune: true
   validation: client
   healthChecks:

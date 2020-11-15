@@ -4,7 +4,8 @@ Progressive Delivery on EKS with AppMesh, Flagger and Flux v2.
 
 ## Prerequisites
 
-Install [eksctl](https://eksctl.io/), [yq](https://mikefarah.gitbook.io/yq/) and the [Flux](https://fluxcd.io) CLI:
+Install [eksctl](https://eksctl.io/), [yq](https://mikefarah.gitbook.io/yq/)
+and the [Flux](https://github.com/fluxcd/flux2) CLI:
 
 ```sh
 brew install eksctl yq fluxcd/tap/flux
@@ -45,7 +46,7 @@ Verify that your EKS cluster satisfies the prerequisites with:
 $ flux check --pre
 ► checking prerequisites
 ✔ kubectl 1.19.4 >=1.18.0
-✔ Kubernetes 1.17.12-eks-7684af >=1.16.0
+✔ Kubernetes 1.18.9-eks-d1db3c >=1.16.0
 ✔ prerequisites checks passed
 ```
 
