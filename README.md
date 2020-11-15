@@ -188,3 +188,23 @@ Promotion completed! Scaling down podinfo.apps
 Lastly, open up podinfo in the browser. You'll see that as Flagger shifts more traffic
 to the canary according to the policy in the Canary object,
 we see requests going to our new version of the app.
+
+## Cleanup
+
+Suspend the cluster reconciliation:
+
+```sh
+flux suspend kustomization cluster-addons
+```
+
+Delete the AppMesh objects:
+
+```sh
+kubectl delete mesh --all
+```
+
+Delete the EKS cluster:
+
+```sh
+eksctl delete cluster -f .eksctl/config.yaml
+```
