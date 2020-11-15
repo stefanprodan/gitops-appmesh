@@ -36,4 +36,4 @@ spec:
     name: flux-system
   path: ./infrastructure/mesh-addons
   prune: true
-  validation: server
+  validation: client

@@ -1,23 +1,24 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: flagger
+  name: appmesh-gateway
+  namespace: appmesh-gateway
 spec:
-  releaseName: flagger
+  releaseName: appmesh-gateway
   chart:
     spec:
-      chart: flagger
+      chart: appmesh-gateway
       sourceRef:
         kind: HelmRepository
-        name: flagger
+        name: eks
         namespace: flux-system
   interval: 5m
   install:
     remediation:
-      retries: 3
+      retries: -1
   upgrade:
     remediation:
       retries: 3
   values:
-    metricsServer: http://appmesh-prometheus:9090
-    meshProvider: appmesh:v1beta2
+    appmesh:
+      gateway: true
