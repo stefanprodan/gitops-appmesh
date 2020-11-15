@@ -13,8 +13,12 @@ spec:
   prune: true
   validation: client
   healthChecks:
-    - apiVersion: helm.toolkit.fluxcd.io/v1beta1
-      kind: HelmRelease
+    - apiVersion: v1
+      kind: Service
+      name: appmesh-controller-webhook-service
+      namespace: appmesh-system
+    - apiVersion: apps/v1
+      kind: Deployment
       name: appmesh-controller
       namespace: appmesh-system
 ---
@@ -24,8 +28,7 @@ metadata:
   name: mesh-addons
   namespace: flux-system
 spec:
-  interval: 30m
-  timeout: 5m
+  interval: 1m
   dependsOn:
     - name: cluster-addons
   sourceRef:
@@ -33,13 +36,4 @@ spec:
     name: flux-system
   path: ./infrastructure/mesh-addons
   prune: true
-  validation: client
-  healthChecks:
-    - apiVersion: helm.toolkit.fluxcd.io/v1beta1
-      kind: HelmRelease
-      name: appmesh-gateway
-      namespace: appmesh-system
-    - apiVersion: helm.toolkit.fluxcd.io/v1beta1
-      kind: HelmRelease
-      name: flagger
-      namespace: appmesh-system
+  validation: server
