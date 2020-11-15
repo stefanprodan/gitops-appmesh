@@ -4,7 +4,8 @@ metadata:
   name: cluster-addons
   namespace: flux-system
 spec:
-  interval: 1h
+  interval: 30m
+  timeout: 5m
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -23,7 +24,8 @@ metadata:
   name: mesh-addons
   namespace: flux-system
 spec:
-  interval: 1h
+  interval: 30m
+  timeout: 5m
   dependsOn:
     - name: cluster-addons
   sourceRef:
