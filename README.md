@@ -4,8 +4,6 @@ Progressive Delivery on EKS with AppMesh, Flagger and Flux v2.
 
 ## Prerequisites
 
-You will need an EKS cluster version 1.16 or newer and kubectl version 1.18.
-
 Install [eksctl](https://eksctl.io/), [yq](https://mikefarah.gitbook.io/yq/) and the [Flux](https://fluxcd.io) CLI:
 
 ```sh
@@ -33,28 +31,13 @@ cd ${GITHUB_REPO}
 
 ## Cluster bootstrap
 
-Create an EKS cluster with AppMesh IAM role in the us-west-2 region:
+Create a cluster with eksctl:
 
 ```sh
-cat << EOF | eksctl create cluster -f -
-apiVersion: eksctl.io/v1alpha5
-kind: ClusterConfig
-metadata:
-  name: appmesh
-  region: us-west-2
-nodeGroups:
-  - name: default
-    instanceType: m5.large
-    desiredCapacity: 2
-    volumeSize: 120
-    iam:
-      withAddonPolicies:
-        appMesh: true
-        xRay: true
-        certManager: true
-        albIngress: true
-EOF
+eksctl create cluster -f .eksctl/config.yaml
 ```
+
+The above command with create a Kubernetes cluster v1.18 with two `m5.large` nodes in the us-west-2 region.
 
 Verify that your EKS cluster satisfies the prerequisites with:
 

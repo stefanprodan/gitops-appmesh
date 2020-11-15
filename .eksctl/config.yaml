@@ -1,0 +1,17 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: stefan-appmesh
+  region: us-west-2
+  version: "1.18"
+nodeGroups:
+  - name: default
+    instanceType: m5.large
+    desiredCapacity: 2
+    volumeSize: 120
+    iam:
+      withAddonPolicies:
+        appMesh: true
+        xRay: true
+        certManager: true
+        albIngress: true
