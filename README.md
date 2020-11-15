@@ -68,14 +68,12 @@ Wait for the cluster reconciliation to finish:
 
 ```console
 $ watch flux get kustomizations 
-NAME              	REVISION                                     	READY
-appmesh-controller	main/6dddb26ac0b07a0557dd930da9f29186f0c155c4	True
-appmesh-gateway   	main/6dddb26ac0b07a0557dd930da9f29186f0c155c4	True
-appmesh-prometheus	main/6dddb26ac0b07a0557dd930da9f29186f0c155c4	True
-apps              	main/6dddb26ac0b07a0557dd930da9f29186f0c155c4	True
-flagger           	main/6dddb26ac0b07a0557dd930da9f29186f0c155c4	True
-flux-system       	main/6dddb26ac0b07a0557dd930da9f29186f0c155c4	True
-sources           	main/6dddb26ac0b07a0557dd930da9f29186f0c155c4	True
+NAME          	REVISION                                     	READY
+apps          	main/582872832315ffca8cf24232b0f6bcb942131a1f	True
+cluster-addons	main/582872832315ffca8cf24232b0f6bcb942131a1f	True	
+flux-system   	main/582872832315ffca8cf24232b0f6bcb942131a1f	True	
+mesh          	main/582872832315ffca8cf24232b0f6bcb942131a1f	True	
+mesh-addons   	main/582872832315ffca8cf24232b0f6bcb942131a1f	True	
 ```
 
 Verify that Flagger, Prometheus, AppMesh controller and gateway Helm releases have been installed:
@@ -87,6 +85,7 @@ appmesh-gateway	appmesh-gateway   	0.1.5   	True
 appmesh-system 	appmesh-controller	1.2.0   	True
 appmesh-system 	appmesh-prometheus	1.0.0   	True
 appmesh-system 	flagger           	1.2.0   	True
+kube-system    	metrics-server    	5.0.1   	True
 ```
 
 ## Application bootstrap
@@ -124,7 +123,33 @@ When you deploy a new podinfo version, Flagger gradually shifts traffic to the c
 and at the same time, measures the requests success rate as well as the average response duration.
 Based on an analysis of these App Mesh provided metrics, a canary deployment is either promoted or rolled back.
 
-First pull the changes from GitHub:
+The canary analysis is defined in [apps/podinfo/canary.yaml](apps/podinfo/canary.yaml):
+
+```yaml
+  analysis:
+    # max traffic percentage routed to canary
+    maxWeight: 50
+    # canary increment step
+    stepWeight: 5
+    # time to wait between traffic increments
+    interval: 15s
+    # max number of failed metric checks before rollback
+    threshold: 5
+    # AppMesh Prometheus checks
+    metrics:
+      - name: request-success-rate
+        # minimum req success rate percentage (non 5xx)
+        thresholdRange:
+          min: 99
+        interval: 1m
+      - name: request-duration
+        # maximum req duration in milliseconds
+        thresholdRange:
+          max: 500
+        interval: 1m
+```
+
+Pull the changes from GitHub:
 
 ```sh
 git pull origin main
@@ -201,7 +226,24 @@ Enable A/B testing:
 yq w -i ./apps/podinfo/kustomization.yaml resources[0] abtest.yaml
 ```
 
-The above configuration will run a canary analysis targeting users with Firefox browsers.
+The above configuration will run a canary analysis targeting users based on their browser user-agent.
+
+The A/B test routing is defined in [apps/podinfo/abtest.yaml](apps/podinfo/abtest.yaml):
+
+```yaml
+  analysis:
+    # number of iterations
+    iterations: 10
+    # time to wait between iterations
+    interval: 15s
+    # max number of failed metric checks before rollback
+    threshold: 5
+    # user segmentation
+    match:
+      - headers:
+          user-agent:
+            regex: ".*(Firefox|curl).*"
+```
 
 Bump podinfo version to `5.0.2`:
 
@@ -222,6 +264,56 @@ Tell Flux to pull changes:
 ```sh
 flux reconcile source git flux-system
 ```
+
+Wait for Flagger to start the A/B test:
+
+```console
+$ kubectl -n appmesh-system logs deploy/flagger -f | jq .msg
+New revision detected! Scaling up podinfo.apps
+Starting canary analysis for podinfo.apps
+Pre-rollout check acceptance-test passed
+Advance podinfo.apps canary iteration 1/10
+```
+
+Open the podinfo URL in Firefox and you will be routed to version `5.0.2` or use curl:
+
+```console
+$ curl ${URL}
+{
+  "hostname": "podinfo-6cf9c5fd49-9fzbt",
+  "version": "5.0.2"
+}
+```
+
+## Automated rollback
+
+During the canary analysis you can generate HTTP 500 errors and high latency
+to test if Flagger pauses and rolls back the faulted version.
+
+Generate HTTP 500 errors every 30s with curl:
+
+```sh
+watch -n 0.5 curl ${URL}/status/500
+```
+
+When the number of failed checks reaches the canary analysis threshold,
+the traffic is routed back to the primary and the canary is scaled to zero.
+
+```console
+$ kubectl -n appmesh-system logs deploy/flagger -f | jq .msg
+Advance podinfo.apps canary iteration 2/10
+Halt podinfo.apps advancement success rate 98.82% < 99%
+Halt podinfo.apps advancement success rate 97.93% < 99%
+Halt podinfo.apps advancement success rate 97.51% < 99%
+Halt podinfo.apps advancement success rate 98.08% < 99%
+Halt podinfo.apps advancement success rate 96.88% < 99%
+Rolling back podinfo.apps failed checks threshold reached 5
+Canary failed! Scaling down podinfo.apps
+```
+
+If you go back to Firefox, you'll see that the podinfo version has been rollback to `5.0.1`.
+Note that on Chrome or Safari, users haven't been affected by the faulty version,
+as they were not routed to `5.0.2` during the analysis.
 
 ## Cleanup
 
