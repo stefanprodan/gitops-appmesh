@@ -189,6 +189,40 @@ Lastly, open up podinfo in the browser. You'll see that as Flagger shifts more t
 to the canary according to the policy in the Canary object,
 we see requests going to our new version of the app.
 
+## A/B testing
+
+Besides weighted routing, Flagger can be configured to route traffic to the canary based on HTTP match conditions.
+In an A/B testing scenario, you'll be using HTTP headers or cookies to target a certain segment of your users.
+This is particularly useful for frontend applications that require session affinity.
+
+Enable A/B testing:
+
+```sh
+yq w -i ./apps/podinfo/kustomization.yaml resources[0] abtest.yaml
+```
+
+The above configuration will run a canary analysis targeting users with Firefox browsers.
+
+Bump podinfo version to `5.0.2`:
+
+```sh
+yq w -i ./apps/kustomization.yaml images[0].newTag 5.0.2
+```
+
+Commit and push changes:
+
+```sh
+git add -A && \
+git commit -m "podinfo 5.0.2" && \
+git push origin main
+```
+
+Tell Flux to pull changes:
+
+```sh
+flux reconcile source git flux-system
+```
+
 ## Cleanup
 
 Suspend the cluster reconciliation:
