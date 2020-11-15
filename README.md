@@ -106,7 +106,7 @@ export URL="http://$(kubectl -n appmesh-gateway get svc/appmesh-gateway -o jsonp
 echo $URL
 ```
 
-Wait for podinfo to become accessible:
+Wait for the DNS to propagate and  podinfo to become accessible:
 
 ```console
 $ watch curl -s ${URL}
