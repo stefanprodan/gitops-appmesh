@@ -25,7 +25,7 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
 kind: Kustomization
 metadata:
-  name: mesh-addons
+  name: mesh
   namespace: flux-system
 spec:
   interval: 5m
@@ -34,6 +34,32 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
+  path: ./infrastructure/mesh
+  prune: true
+  validation: client
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: mesh
+  namespace: flux-system
+spec:
+  interval: 30m
+  timeout: 1m
+  dependsOn:
+    - name: cluster-addons
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
   path: ./infrastructure/mesh-addons
   prune: true
   validation: client
+  healthChecks:
+    - apiVersion: v1
+      kind: Service
+      name: appmesh-gateway
+      namespace: appmesh-gateway
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: appmesh-gateway
+      namespace: appmesh-gateway

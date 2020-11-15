@@ -4,7 +4,7 @@ metadata:
   name: appmesh
   region: us-west-2
   version: "1.18"
-managedNodeGroups:
+nodeGroups:
   - name: default
     instanceType: m5.large
     desiredCapacity: 2

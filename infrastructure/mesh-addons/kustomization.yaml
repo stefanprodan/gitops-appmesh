@@ -5,7 +5,6 @@ resources:
   - gateway.yaml
   - flagger.yaml
   - prometheus.yaml
-  - mesh.yaml
 patchesStrategicMerge:
   - |
     apiVersion: v1
