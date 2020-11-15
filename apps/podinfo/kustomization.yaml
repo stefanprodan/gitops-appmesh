@@ -3,5 +3,5 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - hpa.yaml
-  - canary.yaml
+  - abtest.yaml
   - gateway-route.yaml

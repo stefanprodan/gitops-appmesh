@@ -1,0 +1,77 @@
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: podinfo
+spec:
+  # App Mesh API reference
+  provider: appmesh:v1beta2
+  # deployment reference
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: podinfo
+  # HPA reference (optional)
+  autoscalerRef:
+    apiVersion: autoscaling/v2beta2
+    kind: HorizontalPodAutoscaler
+    name: podinfo
+  # the maximum time in seconds for the canary deployment
+  # to make progress before it is rollback (default 600s)
+  progressDeadlineSeconds: 60
+  service:
+    # container port
+    port: 9898
+    # App Mesh ingress timeout (optional)
+    timeout: 15s
+    # App Mesh retry policy (optional)
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: "gateway-error,client-error,stream-error"
+    # App Mesh URI settings
+    match:
+      - uri:
+          prefix: /
+    rewrite:
+      uri: /
+  # define the canary analysis timing and KPIs
+  analysis:
+    # schedule interval (default 60s)
+    interval: 15s
+    # max number of failed metric checks before rollback
+    threshold: 5
+    # A/B test iterations
+    iterations: 10
+    # User segmentation
+    match:
+      - headers:
+          user-agent:
+            regex: ".*(Firefox|curl).*"
+    # App Mesh Prometheus checks
+    metrics:
+      - name: request-success-rate
+        # minimum req success rate (non 5xx responses)
+        # percentage (0-100)
+        thresholdRange:
+          min: 99
+        interval: 1m
+      - name: request-duration
+        # maximum req duration P99
+        # milliseconds
+        thresholdRange:
+          max: 500
+        interval: 30s
+    # testing (optional)
+    webhooks:
+      - name: acceptance-test
+        type: pre-rollout
+        url: http://flagger-loadtester.$(NAMESPACE)/
+        timeout: 30s
+        metadata:
+          type: bash
+          cmd: "curl -sd 'test' http://podinfo-canary.$(NAMESPACE):9898/token | grep token"
+      - name: load-test
+        url: http://flagger-loadtester.$(NAMESPACE)/
+        timeout: 5s
+        metadata:
+          cmd: "hey -z 1m -q 10 -c 2 http://podinfo-canary.$(NAMESPACE):9898/"
