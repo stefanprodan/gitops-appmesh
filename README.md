@@ -349,7 +349,14 @@ Suspend the cluster reconciliation:
 flux suspend kustomization cluster-addons
 ```
 
-Delete the AppMesh objects:
+Delete the demo app and mesh addons:
+
+```sh
+flux delete kustomization apps -s
+flux delete kustomization mesh-addons -s
+```
+
+Delete the AppMesh mesh:
 
 ```sh
 kubectl delete mesh --all
