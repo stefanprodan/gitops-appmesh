@@ -42,7 +42,7 @@ spec:
     threshold: 5
     # max traffic percentage routed to canary
     # percentage (0-100)
-    maxWeight: 50
+    maxWeight: 30
     # canary increment step
     # percentage (0-100)
     stepWeight: 5
