@@ -184,7 +184,7 @@ git pull origin main
 Bump podinfo version from `5.0.0` to `5.0.1`:
 
 ```sh
-yq w -i ./apps/kustomization.yaml images[0].newTag 5.0.1
+yq w -i ./apps/podinfo/kustomization.yaml images[0].newTag 5.0.1
 ```
 
 Commit and push changes:
@@ -274,7 +274,7 @@ The A/B test routing is defined in [apps/podinfo/abtest.yaml](apps/podinfo/abtes
 Bump podinfo version to `5.0.2`:
 
 ```sh
-yq w -i ./apps/kustomization.yaml images[0].newTag 5.0.2
+yq w -i ./apps/podinfo/kustomization.yaml images[0].newTag 5.0.2
 ```
 
 Commit and push changes:

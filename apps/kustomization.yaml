@@ -15,7 +15,4 @@ vars:
       fieldpath: metadata.name
 configurations:
   - kustomizeconfig.yaml
-images:
-  - name: ghcr.io/stefanprodan/podinfo
-    newName: ghcr.io/stefanprodan/podinfo
-    newTag: 5.0.2
+
