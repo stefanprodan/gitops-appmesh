@@ -184,7 +184,7 @@ git pull origin main
 Bump podinfo version from `5.0.0` to `5.0.1`:
 
 ```sh
-yq w -i ./apps/podinfo/kustomization.yaml 'images[0].newTag' 5.0.1
+yq e '.images[0].newTag="5.0.1"' -i ./apps/podinfo/kustomization.yaml
 ```
 
 Commit and push changes:
@@ -249,7 +249,7 @@ This is particularly useful for frontend applications that require session affin
 Enable A/B testing:
 
 ```sh
-yq w -i ./apps/podinfo/kustomization.yaml 'resources[0]' abtest.yaml
+yq e '.resources[0]="abtest.yaml"' -i ./apps/podinfo/kustomization.yaml
 ```
 
 The above configuration will run a canary analysis targeting users based on their browser user-agent.
@@ -274,7 +274,7 @@ The A/B test routing is defined in [apps/podinfo/abtest.yaml](apps/podinfo/abtes
 Bump podinfo version to `5.0.2`:
 
 ```sh
-yq w -i ./apps/podinfo/kustomization.yaml 'images[0].newTag' 5.0.2
+yq e '.images[0].newTag="5.0.2"' -i ./apps/podinfo/kustomization.yaml
 ```
 
 Commit and push changes:
