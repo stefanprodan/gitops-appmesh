@@ -3,7 +3,7 @@ kind: ClusterConfig
 metadata:
   name: appmesh
   region: us-west-2
-  version: "1.18"
+  version: "1.25"
 nodeGroups:
   - name: default
     instanceType: m5.large
